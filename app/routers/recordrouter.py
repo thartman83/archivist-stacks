@@ -19,13 +19,17 @@
 # }}}
 
 # recordReouter {{{
+import shutil
 from typing import Dict
 from fastapi import APIRouter, HTTPException, UploadFile
+from pydantic import ValidationError
 from starlette import status
+from app.common import Storage, Config
 from ..models import Record
 RecordRouter = APIRouter(prefix='/records', tags=['record'])
 
 records: Dict[int, Record] = {}
+storage = Storage(Config())
 
 
 @RecordRouter.get('/{record_id}')
@@ -39,19 +43,27 @@ async def get_record(record_id: int):
 
 
 @RecordRouter.post('', status_code=status.HTTP_201_CREATED)
-async def add_record(upload: UploadFile):
+async def add_record(upload: UploadFile, name: str):
     """Add a record."""
-    nextid = get_nextid()
-    record = Record(id=nextid, name=upload.filename)
-    record.id = nextid
-    records[nextid] = record
+    try:
 
+        record_path, checksum, recordid = storage.store_record_file(upload)
+        record = Record(id=recordid, name=name,
+                        filename=upload.filename,
+                        record_path=record_path,
+                        checksum=checksum)
+        records[record.id] = record
+    except shutil.Error as err:
+        detail = f"Internal server error: {str(err)}"
+        raise HTTPException(status_code=500,
+                            detail=detail) from err
+    except FileNotFoundError as err:
+        detail = f"Internal Server error: {str(err)}"
+        raise HTTPException(status_code=500,
+                            detail=detail) from err
+    except ValidationError as err:
+        raise HTTPException(status_code=400, detail=str(err)) from err
     return record
-
-
-def get_nextid():
-    """Return the next available recordid."""
-    return 1 if len(records) == 0 else max(records.keys()) + 1
 
 
 @RecordRouter.delete('/{record_id}')

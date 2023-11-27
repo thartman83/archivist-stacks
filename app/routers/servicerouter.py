@@ -1,5 +1,5 @@
 ###############################################################################
-#  record.py for Archivist Stacks models                                     #
+#  servicerouter.py for archivist stacks                                      #
 # Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)              #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
@@ -15,23 +15,21 @@
 ###############################################################################
 
 # Commentary {{{
-"""Record model."""
+"""General service routes."""
 # }}}
 
-#  {{{
-from datetime import datetime
-from pydantic import BaseModel, Field, FilePath
+# serviceRouter {{{
+from fastapi import APIRouter
+from app.common import Config, Storage
+
+ServiceRouter = APIRouter(prefix='/service', tags=['service'])
 
 
-class Record(BaseModel):
-    """Record model."""
-
-    id: int
-    name: str
-    filename: str
-    record_path: FilePath
-    checksum: str
-    created: datetime = Field(default=datetime.now())
-    modified: datetime = Field(default=datetime.now())
-
+@ServiceRouter.get('')
+def get_service_info():
+    """Return general service information."""
+    return {
+        "configuration": Config().model_dump(),
+        "current_storage_dir": Storage(Config()).current_storage_path()
+    }
 # }}}

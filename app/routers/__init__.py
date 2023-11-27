@@ -20,7 +20,8 @@
 
 # __init__ {{{
 from .recordrouter import RecordRouter
+from .servicerouter import ServiceRouter
 
-__all__ = ['RecordRouter']
+__all__ = ['RecordRouter', 'ServiceRouter']
 
 # }}}

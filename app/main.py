@@ -1,5 +1,5 @@
 ###############################################################################
-#  main.py for archivist stacks                                            #
+#  main.py for archivist stacks                                               #
 # Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)              #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
@@ -15,16 +15,16 @@
 ###############################################################################
 
 # Commentary {{{
-"""
-Stacks main entry point
-"""
+"""Stacks main entry point."""
 # }}}
 
 # main {{{
 from fastapi import FastAPI
-from .routers import RecordRouter
+from .routers import RecordRouter, ServiceRouter
+
 
 app = FastAPI()
 app.include_router(RecordRouter)
+app.include_router(ServiceRouter)
 
 # }}}

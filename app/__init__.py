@@ -1,5 +1,5 @@
 ###############################################################################
-#  record.py for Archivist Stacks models                                     #
+#  __init__.py for archivist stacks microservice                              #
 # Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)              #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
@@ -15,23 +15,12 @@
 ###############################################################################
 
 # Commentary {{{
-"""Record model."""
+"""app init file."""
 # }}}
 
-#  {{{
-from datetime import datetime
-from pydantic import BaseModel, Field, FilePath
+# __init__ {{{
+from .common import storage
+from .common.config import Config
 
-
-class Record(BaseModel):
-    """Record model."""
-
-    id: int
-    name: str
-    filename: str
-    record_path: FilePath
-    checksum: str
-    created: datetime = Field(default=datetime.now())
-    modified: datetime = Field(default=datetime.now())
-
+__all__ = ['storage', 'Config']
 # }}}

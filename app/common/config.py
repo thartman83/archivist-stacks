@@ -1,5 +1,5 @@
 ###############################################################################
-#  config.py for archivist stacks                                            #
+#  config.py for archivist stacks                                             #
 # Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)              #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
@@ -22,7 +22,13 @@
 
 from enum import Enum
 from os import environ
-from pydantic import BaseModel, FilePath
+from pydantic import DirectoryPath
+from pydantic_settings import BaseSettings
+
+
+def env_or_default(env: str, default: any):
+    """Return the value from the environment variable or the default value."""
+    return default if env not in environ else environ.get(env)
 
 
 class Environment(Enum):
@@ -33,15 +39,15 @@ class Environment(Enum):
     PROD = 3
 
 
-class Config(BaseModel):
+class Config(BaseSettings):
     """Microservice Configuration."""
 
-    storage_root: FilePath = '/opt/' if 'STORAGE_ROOT' in environ else environ.get('STORAGE_ROOT')
-    stacks_path: str = 'stacks' if 'STACKS' in environ else environ.get('STACKS')
+    app_name: str = "Stacks"
     environment: Environment = Environment.DEV
-    folder_limit: int = 500 if 'FOLDER_LIMIT' in environ else environ.get('FOLDER_LIMIT')
-    folder_mask: str = "{:06d}" if 'FOLDER_MASK' in environ else environ.get('FOLDER_MASK')
 
+    storage_root: DirectoryPath = env_or_default('STORAGE_ROOT', '/opt/')
+    stacks_dir: str = env_or_default('STACKS_PATH', 'stacks')
+    dir_limit: int = env_or_default('FOLDER_LIMIT', 500)
+    dir_mask: str = env_or_default('FOLDER_MASK', '{:06d}')
 
-config = Config()
 # }}}
