@@ -26,7 +26,7 @@ from pydantic import ValidationError
 from starlette import status
 from app.common import Storage, Config
 from ..models import Record
-RecordRouter = APIRouter(prefix='/records', tags=['record'])
+RecordRouter = APIRouter(prefix='/records', tags=['records'])
 
 records: Dict[int, Record] = {}
 storage = Storage(Config())
@@ -43,15 +43,15 @@ async def get_record(record_id: int):
 
 
 @RecordRouter.post('', status_code=status.HTTP_201_CREATED)
-async def add_record(upload: UploadFile, name: str):
+async def add_record(upload: UploadFile, title: str):
     """Add a record."""
     try:
-
-        record_path, checksum, recordid = storage.store_record_file(upload)
-        record = Record(id=recordid, name=name,
+        record_path, checksum, size, recordid = storage.store_record(upload)
+        record = Record(id=recordid, title=title,
                         filename=upload.filename,
                         record_path=record_path,
-                        checksum=checksum)
+                        checksum=checksum,
+                        size=size)
         records[record.id] = record
     except shutil.Error as err:
         detail = f"Internal server error: {str(err)}"

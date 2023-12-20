@@ -21,6 +21,7 @@
 #  {{{
 from .config import Config
 from .storage import Storage
+from .database import create_dbsession
 
-__all__ = ['Config', 'Storage']
+__all__ = ['Config', 'Storage', 'create_dbsession']
 # }}}

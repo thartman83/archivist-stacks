@@ -1,3 +1,7 @@
 #+TITLE: Archivist Stacks
 #+AUTHOR: Tom Hartman
 * Endpoints
+* TODO
+** Record
+*** Remove modified
+*** Add author?

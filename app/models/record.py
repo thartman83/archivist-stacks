@@ -27,11 +27,18 @@ class Record(BaseModel):
     """Record model."""
 
     id: int
-    name: str
+    title: str
     filename: str
     record_path: FilePath
     checksum: str
+    size: int
     created: datetime = Field(default=datetime.now())
     modified: datetime = Field(default=datetime.now())
+
+    class Config:  # pylint: disable=too-few-public-methods
+        """ORM support for model."""
+
+        orm_mode: True
+
 
 # }}}

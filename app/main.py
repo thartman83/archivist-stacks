@@ -20,8 +20,10 @@
 
 # main {{{
 from fastapi import FastAPI
-from .routers import RecordRouter, ServiceRouter
+from app.common import create_dbsession, Config
+from app.routers import RecordRouter, ServiceRouter
 
+engine, session, db_base = create_dbsession(Config())
 
 app = FastAPI()
 app.include_router(RecordRouter)

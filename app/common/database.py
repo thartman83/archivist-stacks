@@ -1,5 +1,5 @@
 ###############################################################################
-#  config.py for archivist stacks                                             #
+# database.py for archivist stacks                                            #
 # Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)              #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
@@ -15,40 +15,24 @@
 ###############################################################################
 
 # Commentary {{{
-"""Microservice configuration."""
+"""Common database functions."""
 # }}}
 
-# config {{{
-
-from enum import Enum
-from os import environ
-from pydantic import DirectoryPath
-from pydantic_settings import BaseSettings
-
-
-def env_or_default(env: str, default: any):
-    """Return the value from the environment variable or the default value."""
-    return default if env not in environ else environ.get(env)
+# database {{{
+from typing import Any
+from sqlalchemy import create_engine, Engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, Session
+from app.common import Config
 
 
-class Environment(Enum):
-    """Microservice environment type."""
+def create_dbsession(config: Config) -> {Engine, Session, Any}:
+    """Return the engine, local_session and BaseModel for db functions."""
+    engine = create_engine(config.db_url)
+    local_session = sessionmaker(autocommit=False,
+                                 autoflush=False, bind=engine)
+    base = declarative_base()
 
-    DEV = 1
-    TEST = 2
-    PROD = 3
-
-
-class Config(BaseSettings):
-    """Microservice Configuration."""
-
-    app_name: str = "Stacks"
-    environment: Environment = Environment.DEV
-
-    storage_root: DirectoryPath = env_or_default('STORAGE_ROOT', '/opt/')
-    stacks_dir: str = env_or_default('STACKS_PATH', 'stacks')
-    dir_limit: int = env_or_default('FOLDER_LIMIT', 500)
-    dir_mask: str = env_or_default('FOLDER_MASK', '{:06d}')
-    db_url: str = env_or_default('SQL_URL', "sqlite:///./stacks.db")
+    return (engine, local_session, base)
 
 # }}}

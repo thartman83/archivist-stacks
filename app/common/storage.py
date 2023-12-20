@@ -47,7 +47,7 @@ class Storage():
         if not stacks_root.exists():
             stacks_root.mkdir()
 
-    def store_record_file(self, upload_file: UploadFile) -> {Path, str, int}:
+    def store_record(self, upload_file: UploadFile) -> {Path, str, int}:
         """Store the upload file into the stacks."""
         # read the file to get the checksum, re-seek back to 0 afterwards
         # since we will need to read it again to actually copy the data
@@ -67,8 +67,9 @@ class Storage():
         finally:
             upload_file.file.close()
 
+        size = destination.stat().st_size
         self.cur_recordid = self.cur_recordid + 1
-        return (destination, md_hash, self.cur_recordid)
+        return (destination, md_hash, size, self.cur_recordid)
 
     def current_storage_path(self) -> Path:
         """Return the storage path."""
