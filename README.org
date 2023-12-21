@@ -1,7 +1,14 @@
 #+TITLE: Archivist Stacks
 #+AUTHOR: Tom Hartman
+
+* How to run
+#+begin_src shell
+uvicorn app.main:app --reload
+#+end_src
 * Endpoints
 * TODO
 ** Record
 *** Remove modified
 *** Add author?
+*** Look into Alembic
+*** Look into local sessions

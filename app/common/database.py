@@ -35,4 +35,6 @@ def create_dbsession(config: Config) -> {Engine, Session, Any}:
 
     return (engine, local_session, base)
 
+
+Engine, Session, DB_Base = create_dbsession(Config())
 # }}}
