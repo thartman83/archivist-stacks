@@ -33,6 +33,7 @@ class RecordBase(BaseModel):  # pylint: disable=too-few-public-methods
     record_path: FilePath
     checksum: str
     size: int
+    mimetype: str
     created: datetime = Field(default=datetime.now())
     modified: datetime = Field(default=datetime.now())
 
@@ -67,6 +68,7 @@ class RecordDB(DB_Base):  # pylint: disable=too-few-public-methods
     size = Column(Integer)
     created = Column(DateTime)
     modified = Column(DateTime)
+    mimetype = Column(String)
 
 
 # Crud utilities

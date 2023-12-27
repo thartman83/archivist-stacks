@@ -6,6 +6,12 @@
 uvicorn app.main:app --reload
 #+end_src
 * Endpoints
+* Schemas
+** Records
+If unix believes everything is a file then the archives belives everything is a record
+** Editions
+** Collections
+
 * TODO
 ** Record
 *** Remove modified
