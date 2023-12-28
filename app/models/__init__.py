@@ -19,7 +19,7 @@
 # }}}
 
 #  {{{
-from .record import Record
+from .record import Record, RecordCreate
 
-__all__ = ['Record']
+__all__ = ['Record', 'RecordCreate']
 # }}}

@@ -1,5 +1,5 @@
 ###############################################################################
-#  test_record.py for archivist stacks microservice                           #
+#  common.py for Archivist Stacks database models                            #
 # Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)              #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
@@ -15,7 +15,31 @@
 ###############################################################################
 
 # Commentary {{{
-"""Unit tests for record ORM models."""
+"""Common database functions."""
 # }}}
 
-#  {{{
+# common {{{
+from sqlalchemy import create_engine, Engine
+from sqlalchemy.orm import sessionmaker, Session, DeclarativeBase
+from app.common import Config
+
+cfg: Config = Config()
+
+engine: Engine = create_engine(cfg.db_url)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+def get_db() -> Session:
+    """Return a database connection."""
+    db = SessionLocal()
+
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+class Base(DeclarativeBase):  # pylint: disable=too-few-public-methods
+    """Base database model."""
+
+# }}}

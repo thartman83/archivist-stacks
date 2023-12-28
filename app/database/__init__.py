@@ -1,5 +1,5 @@
 ###############################################################################
-#  test_record.py for archivist stacks microservice                           #
+#  __init__.py for Archivist Stacks database module                           #
 # Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)              #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
@@ -15,7 +15,13 @@
 ###############################################################################
 
 # Commentary {{{
-"""Unit tests for record ORM models."""
+"""Database module definition."""
 # }}}
 
-#  {{{
+# __init__ {{{
+from .common import get_db, Base
+from .record_db import RecordDB, create_record
+
+__all__ = ['get_db', 'Base', 'RecordDB', 'create_record']
+
+# }}}
