@@ -33,7 +33,6 @@ class RecordBase(BaseModel):  # pylint: disable=too-few-public-methods
     size: int
     mimetype: str
     created: datetime = Field(default=datetime.now())
-    modified: datetime = Field(default=datetime.now())
 
     @field_serializer('record_path')
     def serialize_record_path(self, record_path: FilePath, _info):

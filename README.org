@@ -3,8 +3,10 @@
 
 * How to run
 #+begin_src shell
-uvicorn app.main:app --reload
+SQL_URL='postgresql://username@localhost/stacks' uvicorn app.main:app --reload
 #+end_src
+
+
 * Endpoints
 * Schemas
 ** Records

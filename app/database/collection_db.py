@@ -92,7 +92,10 @@ def find_collection_by_id(col_id: int, db: Session) -> Collection:
     """Find a collection by id."""
     try:
         col = db.query(CollectionDB).filter(CollectionDB.id == col_id).first()
-        return Collection(**col.__dict__)
+        if col is None:
+            return None
+        else:
+            return Collection(**col.__dict__)
     except SQLAlchemyError as ex:
         raise ex
 

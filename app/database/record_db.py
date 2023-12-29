@@ -38,7 +38,6 @@ class RecordDB(Base):  # pylint: disable=too-few-public-methods
     checksum = mapped_column(String)
     size = mapped_column(Integer)
     created = mapped_column(DateTime)
-    modified = mapped_column(DateTime)
     mimetype = mapped_column(String)
 
 
