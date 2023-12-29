@@ -1,6 +1,6 @@
 ###############################################################################
-#  test_record_db.py for Archivist Stacks record_db unit tests                #
-# Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)              #
+#  test_collection_db.py for Archivist Stacks unit tests                      #
+#  Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)             #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
 #  modify it under the terms of the GNU General Public License                #
@@ -15,17 +15,17 @@
 ###############################################################################
 
 # Commentary {{{
-"""Unit tests for Record_DB."""
+"""Collection ORM database unit tests."""
 # }}}
 
-# test_record_db {{{
-
+# test_collection_db {{{
 import pytest
 from sqlalchemy import create_engine, Engine, StaticPool
 from sqlalchemy.orm import sessionmaker, Session
 from pydantic import FilePath
-from app.models import Record, RecordCreate
-from app.database import Base, create_record
+from app.models import RecordCreate, CollectionCreate
+from app.models import Collection
+from app.database import Base, create_collection
 
 DB_URL = 'sqlite:///:memory:'
 engine: Engine = create_engine(DB_URL,
@@ -55,22 +55,29 @@ def fixture_test_session() -> Session:
     yield testing_session_local
 
 
-def test_create_record(test_session_local) -> None:
-    """Given a stacks database
-       WHEN create_record is called
-       WHEN parameters are valid
-       SHOUL create a database entry for the new record."""
+def test_create_collection(test_session_local) -> None:
+    """
+    GIVEN a stacks datebase
+    WHEN a collection is create
+    SHOULD create a collection, edition, record in the database.
+    """
 
     with test_session_local() as db:
-
         rec_path = FilePath('LICENSE')
-        rec_create = RecordCreate(title='A Title',
-                                  filename='afile.docx',
-                                  record_path=rec_path,
-                                  checksum='alkdsjf2379',
-                                  size=12334,
-                                  mimetype='application-pdf')
-        rec: Record = create_record(rec_create, db)
-        assert rec.id is not None
+        rec = RecordCreate(title='A Title',
+                           filename='afile.docx',
+                           record_path=rec_path,
+                           checksum='alkdsjf2379',
+                           size=12334,
+                           mimetype='application-pdf')
+
+        col = CollectionCreate(title='A Title')
+
+        ret: Collection = create_collection(col, rec, db)
+        assert ret.id is not None
+        assert ret.current_edition.id is not None
+        assert ret.current_edition.native.id is not None
+        assert len(ret.editions) == 1
+        assert ret.editions[0].id == ret.current_edition.id
 
 # }}}

@@ -20,13 +20,12 @@
 
 # main {{{
 from fastapi import FastAPI
-from app.common import Config, Engine, DB_Base, Session
-from app.routers import RecordRouter, ServiceRouter
-
-__all__ = ['Engine', 'DB_Base', 'Session', 'Config']
+from app.routers import CollectionRouter, ServiceRouter
+# from app.database import get_db, create_tables
+# import sqlalchemy as sa
 
 app = FastAPI()
-app.include_router(RecordRouter)
+app.include_router(CollectionRouter)
 app.include_router(ServiceRouter)
 
 # }}}

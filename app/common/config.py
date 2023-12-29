@@ -49,6 +49,6 @@ class Config(BaseSettings):
     stacks_dir: str = env_or_default('STACKS_PATH', 'stacks')
     dir_limit: int = env_or_default('FOLDER_LIMIT', 500)
     dir_mask: str = env_or_default('FOLDER_MASK', '{:06d}')
-    db_url: str = env_or_default('SQL_URL', "sqlite:///./stacks.db")
+    db_url: str = env_or_default('SQL_URL', 'sqlite:///.stacksdb')
 
 # }}}

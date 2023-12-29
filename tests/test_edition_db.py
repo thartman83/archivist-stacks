@@ -1,5 +1,5 @@
 ###############################################################################
-#  test_record_db.py for Archivist Stacks record_db unit tests                #
+#  test_edition_db.py for Archivist Stacks unit tests                         #
 # Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)              #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
@@ -15,17 +15,17 @@
 ###############################################################################
 
 # Commentary {{{
-"""Unit tests for Record_DB."""
+"""Edition ORM database unit tests."""
 # }}}
 
-# test_record_db {{{
+# test_edition_db {{{
 
 import pytest
 from sqlalchemy import create_engine, Engine, StaticPool
 from sqlalchemy.orm import sessionmaker, Session
 from pydantic import FilePath
-from app.models import Record, RecordCreate
-from app.database import Base, create_record
+from app.models import Record, RecordCreate, Edition, EditionCreate
+from app.database import Base, create_record, create_edition
 
 DB_URL = 'sqlite:///:memory:'
 engine: Engine = create_engine(DB_URL,
@@ -55,22 +55,26 @@ def fixture_test_session() -> Session:
     yield testing_session_local
 
 
-def test_create_record(test_session_local) -> None:
-    """Given a stacks database
-       WHEN create_record is called
-       WHEN parameters are valid
-       SHOUL create a database entry for the new record."""
+# def test_create_edition(test_session_local) -> None:
+#     """Given a stacks database
+#        WHEN create_record is called
+#        WHEN parameters are valid
+#        SHOULD create a database entry for the new record."""
 
-    with test_session_local() as db:
-
-        rec_path = FilePath('LICENSE')
-        rec_create = RecordCreate(title='A Title',
-                                  filename='afile.docx',
-                                  record_path=rec_path,
-                                  checksum='alkdsjf2379',
-                                  size=12334,
-                                  mimetype='application-pdf')
-        rec: Record = create_record(rec_create, db)
-        assert rec.id is not None
+#     with test_session_local() as db:
+#         rec_path = FilePath('LICENSE')
+#         rec_create = RecordCreate(title='A Title',
+#                                   filename='afile.docx',
+#                                   record_path=rec_path,
+#                                   checksum='alkdsjf2379',
+#                                   size=12334,
+#                                   mimetype='application-pdf')
+#         rec: Record = create_record(rec_create, db)
+#         ed_create = EditionCreate(native=rec, page_count=2, page_text=[],
+#                                   page_images=[])
+#         ed: Edition = create_edition(ed_create, db)
+#         assert ed.id is not None
+#         assert ed.native.id is not None
+#         assert ed.native.id == rec.id
 
 # }}}

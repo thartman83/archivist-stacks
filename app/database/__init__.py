@@ -19,9 +19,15 @@
 # }}}
 
 # __init__ {{{
-from .common import get_db, Base
+from .common import get_db, Base, create_tables
 from .record_db import RecordDB, create_record
-
-__all__ = ['get_db', 'Base', 'RecordDB', 'create_record']
+from .edition_db import EditionDB, create_edition
+from .collection_db import (
+    CollectionDB, create_collection, find_collection_by_id
+)
+__all__ = ['get_db', 'Base', 'create_tables',
+           'RecordDB', 'create_record',
+           'EditionDB', 'create_edition',
+           'CollectionDB', 'create_collection', 'find_collection_by_id']
 
 # }}}

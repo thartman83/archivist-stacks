@@ -1,6 +1,6 @@
 ###############################################################################
-#  __init__.py for archivist stacks                                           #
-# Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)              #
+#  edition.py for Archivist Stacks models                                     #
+#  Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)             #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
 #  modify it under the terms of the GNU General Public License                #
@@ -15,13 +15,37 @@
 ###############################################################################
 
 # Commentary {{{
-"""Routers Module."""
+"""Edition model."""
 # }}}
 
-# __init__ {{{
-from .servicerouter import ServiceRouter
-from .collection_router import CollectionRouter
+# edition {{{
+# import hashlib
+from typing import List, Optional
+from pydantic import BaseModel, ConfigDict
+from app.models import Record
 
-__all__ = ['CollectionRouter', 'ServiceRouter']
+
+class EditionBase(BaseModel):
+    """Pydantic representation of a edition base model."""
+
+    pass  # pylint: disable=unnecessary-pass
+
+
+class EditionCreate(EditionBase):
+    """Pydantic representation of a edition creation model."""
+
+    pass  # pylint: disable=unnecessary-pass
+
+
+class Edition(EditionBase):
+    """Pydantic representation of a edition model."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    native: Record
+    page_text: Optional[List[Record]] = []
+    page_images: Optional[List[Record]] = []
+
 
 # }}}

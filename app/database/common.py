@@ -1,5 +1,5 @@
 ###############################################################################
-#  common.py for Archivist Stacks database models                            #
+# common.py for Archivist Stacks database models                              #
 # Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)              #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
@@ -41,5 +41,11 @@ def get_db() -> Session:
 
 class Base(DeclarativeBase):  # pylint: disable=too-few-public-methods
     """Base database model."""
+
+
+def create_tables():
+    """Create the database tables."""
+    print(cfg.db_url)
+    Base.metadata.create_all(bind=engine)
 
 # }}}

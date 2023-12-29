@@ -20,6 +20,10 @@
 
 #  {{{
 from .record import Record, RecordCreate
+from .edition import Edition, EditionCreate
+from .collection import Collection, CollectionCreate
 
-__all__ = ['Record', 'RecordCreate']
+__all__ = ['Record', 'RecordCreate',
+           'Edition', 'EditionCreate',
+           'Collection', 'CollectionCreate']
 # }}}

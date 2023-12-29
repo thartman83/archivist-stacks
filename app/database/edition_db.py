@@ -1,6 +1,6 @@
 ###############################################################################
-# record_db.py for Archivist Stacks database models                           #
-# Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)              #
+#  edition_db.py for Archivist Stacks database models                         #
+#  Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)             #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
 #  modify it under the terms of the GNU General Public License                #
@@ -15,49 +15,47 @@
 ###############################################################################
 
 # Commentary {{{
-"""Record database models."""
+"""Edition ORM representation."""
 # }}}
 
-# record_db {{{
-from sqlalchemy import Integer, String, DateTime
+# edition_db {{{
+from sqlalchemy import Integer, ForeignKey
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import mapped_column, Session
-from app.models import Record, RecordCreate
-from app.database import Base
+from sqlalchemy.orm import Mapped, mapped_column, Session
+from sqlalchemy.orm import relationship
+from app.database import Base, RecordDB
+from app.models import Edition, EditionCreate
 
 
-class RecordDB(Base):  # pylint: disable=too-few-public-methods
-    """SQL Alchemy record model."""
+class EditionDB(Base):  # pylint: disable=too-few-public-methods
+    """SQL Alchemy edition model."""
 
-    __tablename__ = "record"
+    __tablename__ = "edition"
 
     id = mapped_column(Integer, primary_key=True, index=True)
-    title = mapped_column(String, index=True)
-    filename = mapped_column(String, index=True)
-    record_path = mapped_column(String)
-    checksum = mapped_column(String)
-    size = mapped_column(Integer)
-    created = mapped_column(DateTime)
-    modified = mapped_column(DateTime)
-    mimetype = mapped_column(String)
+#    page_count: Mapped[int]
+    native_id: Mapped[int] = mapped_column(ForeignKey("record.id"))
+    native: Mapped["RecordDB"] = relationship(lazy='joined')
 
 
-# Crud utilities
-def create_record(record: RecordCreate, db: Session) -> Record:
-    """Create a record."""
+def create_edition(ed: EditionCreate, db: Session) -> Edition:
+    """Add a new edition."""
     try:
-        db_record = RecordDB(**record.model_dump())
-        db.add(db_record)
-
+        db_ed = EditionDB(native_id=ed.native.id,
+                          page_count=ed.page_count)
+        db.add(db_ed)
         db.commit()
-        db.refresh(db_record)
-        return Record(**db_record.__dict__)
+        db.refresh(db_ed)
+        return Edition(**db_ed.__dict__)
     except SQLAlchemyError as ex:
         db.rollback()
         raise ex
 
 
-def get_record_by_id(record_id: int, db: Session) -> Record:
-    """Return a record by id."""
-    return db.query(RecordDB).filter(RecordDB.id == record_id).first()
+def get_edition_by_id(edition_id: int, db: Session) -> Edition:
+    """Return an edition by id."""
+    ed = db.query(EditionDB).filter(EditionDB.id == edition_id).first()
+    return Edition(**ed.__dict__)
+
+
 # }}}

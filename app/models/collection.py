@@ -1,5 +1,5 @@
 ###############################################################################
-#  __init__.py for archivist stacks                                           #
+#  collection.py for Archivist Stacks models                                  #
 # Copyright (c) 2023 Tom Hartman (thomas.lees.hartman@gmail.com)              #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
@@ -15,13 +15,32 @@
 ###############################################################################
 
 # Commentary {{{
-"""Routers Module."""
+"""Collection model."""
 # }}}
 
-# __init__ {{{
-from .servicerouter import ServiceRouter
-from .collection_router import CollectionRouter
+# collection {{{
+from typing import List
+from pydantic import BaseModel
+from app.models import Edition
 
-__all__ = ['CollectionRouter', 'ServiceRouter']
+
+class CollectionBase(BaseModel):
+    """Pydantic representation of a collection base model."""
+
+    title: str
+
+
+class CollectionCreate(CollectionBase):
+    """Pydantic representation of a collection creation model."""
+
+    pass  # pylint: disable=unnecessary-pass
+
+
+class Collection(BaseModel):
+    """Pydantic representation of a collection model."""
+
+    id: int
+    editions: List[Edition]
+    current_edition: Edition
 
 # }}}

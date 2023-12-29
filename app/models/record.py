@@ -20,7 +20,7 @@
 
 #  {{{
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, FilePath, field_serializer, ConfigDict
 
 
 class RecordBase(BaseModel):  # pylint: disable=too-few-public-methods
@@ -28,12 +28,17 @@ class RecordBase(BaseModel):  # pylint: disable=too-few-public-methods
 
     title: str
     filename: str
-    record_path: str
+    record_path: FilePath
     checksum: str
     size: int
     mimetype: str
     created: datetime = Field(default=datetime.now())
     modified: datetime = Field(default=datetime.now())
+
+    @field_serializer('record_path')
+    def serialize_record_path(self, record_path: FilePath, _info):
+        """Return the FilePath as a string."""
+        return str(record_path)
 
 
 class RecordCreate(RecordBase):  # pylint: disable=too-few-public-methods
@@ -42,15 +47,12 @@ class RecordCreate(RecordBase):  # pylint: disable=too-few-public-methods
     pass  # pylint: disable=unnecessary-pass
 
 
-class Record(BaseModel):  # pylint: disable=too-few-public-methods
+class Record(RecordBase):  # pylint: disable=too-few-public-methods
     """Pydantic Record model."""
 
     id: int
 
-    class Config:  # pylint: disable=too-few-public-methods
-        """ORM support for model."""
-
-        orm_mode: True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # }}}

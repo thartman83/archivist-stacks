@@ -69,7 +69,7 @@ class Storage():
 
         size = destination.stat().st_size
         self.cur_recordid = self.cur_recordid + 1
-        return (destination, md_hash, size, self.cur_recordid)
+        return (destination, md_hash, size)
 
     def current_storage_path(self) -> Path:
         """Return the storage path."""
@@ -95,4 +95,8 @@ class Storage():
     def stacks_root(self):
         """Return the root directory for the stacks."""
         return Path(self.config.storage_root, self.config.stacks_dir)
+
+    def rollback_record(self, record_path: Path):
+        """Remove a record on failed upload."""
+        record_path.unlink()
 # }}}
