@@ -83,6 +83,8 @@ def add_edition(collection: Collection, record: RecordCreate,
         col_db.editions.append(ed_db)
 
         db.commit()
+        db.refresh(col_db)
+        return Collection(**col_db.__dict__)
     except SQLAlchemyError as ex:
         db.rollback()
         raise ex

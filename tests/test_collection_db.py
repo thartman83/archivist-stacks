@@ -25,7 +25,7 @@ from sqlalchemy.orm import sessionmaker, Session
 from pydantic import FilePath
 from app.models import RecordCreate, CollectionCreate
 from app.models import Collection
-from app.database import Base, create_collection
+from app.database import Base, create_collection, add_edition
 
 DB_URL = 'sqlite:///:memory:'
 engine: Engine = create_engine(DB_URL,
@@ -80,4 +80,40 @@ def test_create_collection(test_session_local) -> None:
         assert len(ret.editions) == 1
         assert ret.editions[0].id == ret.current_edition.id
 
+
+def test_add_edition(test_session_local) -> None:
+    """
+    GIVEN a stacks database
+    GIVEN a collection exists
+    WHEN an edition is added
+    SHOULD change the current edition to the new file
+    SHOULD have 2 editions in the edition list.
+    """
+
+    with test_session_local() as db:
+        rec_path = FilePath('tests/testfiles/foo.txt')
+        rec = RecordCreate(title='A Title',
+                           filename='afile.docx',
+                           record_path=rec_path,
+                           checksum='alkdsjf2379',
+                           size=12334,
+                           mimetype='application-pdf')
+
+        col = CollectionCreate(title='A Title')
+
+        ret: Collection = create_collection(col, rec, db)
+
+        rec2_path = FilePath('tests/testfiles/bar.txt')
+        rec2 = RecordCreate(title='A Title',
+                            filename='afile.docx',
+                            record_path=rec2_path,
+                            checksum='alkdsjf2379',
+                            size=12334,
+                            mimetype='text')
+        ret2: Collection = add_edition(ret, rec2, db)
+
+        assert ret2.id == ret.id
+        assert len(ret2.editions) == 2
+        assert ret2.current_edition.id != ret.current_edition.id
+        assert ret2.current_edition.native.record_path == rec2_path
 # }}}
