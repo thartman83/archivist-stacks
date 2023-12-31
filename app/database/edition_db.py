@@ -33,9 +33,9 @@ class EditionDB(Base):  # pylint: disable=too-few-public-methods
     __tablename__ = "edition"
 
     id = mapped_column(Integer, primary_key=True, index=True)
-#    page_count: Mapped[int]
     native_id: Mapped[int] = mapped_column(ForeignKey("record.id"))
     native: Mapped["RecordDB"] = relationship(lazy='joined')
+    edition_number = mapped_column(Integer, index=True)
 
 
 def create_edition(ed: EditionCreate, db: Session) -> Edition:

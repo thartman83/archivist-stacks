@@ -23,11 +23,13 @@ from .common import get_db, Base, create_tables
 from .record_db import RecordDB, create_record
 from .edition_db import EditionDB, create_edition
 from .collection_db import (
-    CollectionDB, create_collection, find_collection_by_id, add_edition
+    CollectionDB, create_collection, col_x_ed, find_collection_by_id,
+    add_edition
 )
 __all__ = ['get_db', 'Base', 'create_tables',
            'RecordDB', 'create_record',
            'EditionDB', 'create_edition',
-           'CollectionDB', 'create_collection', 'find_collection_by_id']
+           'CollectionDB', 'create_collection',
+           'col_x_ed', 'find_collection_by_id', 'add_edition']
 
 # }}}

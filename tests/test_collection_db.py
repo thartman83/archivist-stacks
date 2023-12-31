@@ -79,6 +79,7 @@ def test_create_collection(test_session_local) -> None:
         assert ret.current_edition.native.id is not None
         assert len(ret.editions) == 1
         assert ret.editions[0].id == ret.current_edition.id
+        assert ret.current_edition.edition_number == 0
 
 
 def test_add_edition(test_session_local) -> None:
@@ -116,4 +117,5 @@ def test_add_edition(test_session_local) -> None:
         assert len(ret2.editions) == 2
         assert ret2.current_edition.id != ret.current_edition.id
         assert ret2.current_edition.native.record_path == rec2_path
+        assert ret2.current_edition.edition_number == 1
 # }}}

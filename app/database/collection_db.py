@@ -28,12 +28,15 @@ from app.database import Base, EditionDB, RecordDB
 from app.models import RecordCreate, CollectionCreate
 from app.models import Collection
 
-assoc_table = Table(
-    "collection_x_edition",
+col_x_ed = Table(
+    "collection_edition_assoc",
     Base.metadata,
-    Column("collection_id", ForeignKey("collection.id"), primary_key=True),
-    Column("edition_id", ForeignKey("edition.id"), primary_key=True)
-)
+    Column("collection_id", ForeignKey("collection.id"), primary_key=True,
+           index=True),
+    Column("edition_id", ForeignKey("edition.id"), primary_key=True,
+           index=True),
+    Column("edition_number", ForeignKey("edition.edition_number"),
+           primary_key=True, index=True))
 
 
 class CollectionDB(Base):  # pylint: disable=too-few-public-methods
@@ -45,7 +48,7 @@ class CollectionDB(Base):  # pylint: disable=too-few-public-methods
     title = mapped_column(String, index=True)
     current_edition_id: Mapped[int] = mapped_column(ForeignKey("edition.id"))
     current_edition: Mapped[EditionDB] = relationship(lazy='joined')
-    editions: Mapped[List[EditionDB]] = relationship(secondary=assoc_table,
+    editions: Mapped[List[EditionDB]] = relationship(secondary=col_x_ed,
                                                      lazy='joined')
 
 
@@ -56,7 +59,7 @@ def create_collection(collection: CollectionCreate, record: RecordCreate,
 
         rec_db = RecordDB(**record.model_dump())
 
-        ed_db = EditionDB(native=rec_db)
+        ed_db = EditionDB(native=rec_db, edition_number=0)
 
         collection_db = CollectionDB(**collection.model_dump(),
                                      current_edition=ed_db, editions=[ed_db])
@@ -75,7 +78,9 @@ def add_edition(collection: Collection, record: RecordCreate,
     """Add an edition to a collection."""
     try:
         rec_db = RecordDB(**record.model_dump())
-        ed_db = EditionDB(native=rec_db)
+        ed_db = EditionDB(native=rec_db,
+                          edition_number=max(collection.editions,
+                                             key=lambda x: x.edition_number)+1)
 
         col_db: CollectionDB = db.query(CollectionDB).filter(
             CollectionDB.id == collection.id).first()

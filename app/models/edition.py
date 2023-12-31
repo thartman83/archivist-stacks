@@ -28,6 +28,7 @@ from app.models import Record
 class EditionBase(BaseModel):
     """Pydantic representation of a edition base model."""
 
+    edition_number: int
     pass  # pylint: disable=unnecessary-pass
 
 
@@ -44,8 +45,5 @@ class Edition(EditionBase):
 
     id: int
     native: Record
-    page_text: Optional[List[Record]] = []
-    page_images: Optional[List[Record]] = []
-
 
 # }}}
