@@ -33,9 +33,12 @@ class EditionDB(Base):  # pylint: disable=too-few-public-methods
     __tablename__ = "edition"
 
     id = mapped_column(Integer, primary_key=True, index=True)
+    edition_number = mapped_column(Integer, index=True, nullable=False)
     native_id: Mapped[int] = mapped_column(ForeignKey("record.id"))
     native: Mapped["RecordDB"] = relationship(lazy='joined')
-    edition_number = mapped_column(Integer, index=True)
+
+    #  edition_number = relationship('collection_edition_assoc',
+    #  back_populates='edition_number')
 
 
 def create_edition(ed: EditionCreate, db: Session) -> Edition:

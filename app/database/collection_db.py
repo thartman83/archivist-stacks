@@ -21,12 +21,14 @@
 # collection_db {{{
 from typing import List
 from sqlalchemy import Integer, ForeignKey, Table, Column, String
+from sqlalchemy import UniqueConstraint
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Mapped, mapped_column, Session
 from sqlalchemy.orm import relationship
 from app.database import Base, EditionDB, RecordDB
 from app.models import RecordCreate, CollectionCreate
-from app.models import Collection
+from app.models import Collection, Edition
+
 
 col_x_ed = Table(
     "collection_edition_assoc",
@@ -35,8 +37,7 @@ col_x_ed = Table(
            index=True),
     Column("edition_id", ForeignKey("edition.id"), primary_key=True,
            index=True),
-    Column("edition_number", ForeignKey("edition.edition_number"),
-           primary_key=True, index=True))
+    UniqueConstraint("collection_id", "edition_id"))
 
 
 class CollectionDB(Base):  # pylint: disable=too-few-public-methods
@@ -73,14 +74,18 @@ def create_collection(collection: CollectionCreate, record: RecordCreate,
         raise ex
 
 
-def add_edition(collection: Collection, record: RecordCreate,
+def add_edition(collection_id: int, record: RecordCreate,
                 db: Session) -> Collection:
     """Add an edition to a collection."""
     try:
+        collection = db.query(CollectionDB).filter(CollectionDB.id ==
+                                                   collection_id).first()
+
         rec_db = RecordDB(**record.model_dump())
+        max_edition = max(collection.editions,
+                          key=lambda x: x.edition_number)
         ed_db = EditionDB(native=rec_db,
-                          edition_number=max(collection.editions,
-                                             key=lambda x: x.edition_number)+1)
+                          edition_number=max_edition.edition_number+1)
 
         col_db: CollectionDB = db.query(CollectionDB).filter(
             CollectionDB.id == collection.id).first()
@@ -101,8 +106,24 @@ def find_collection_by_id(col_id: int, db: Session) -> Collection:
         col = db.query(CollectionDB).filter(CollectionDB.id == col_id).first()
         if col is None:
             return None
-        else:
-            return Collection(**col.__dict__)
+
+        return Collection(**col.__dict__)
+    except SQLAlchemyError as ex:
+        raise ex
+
+
+def find_edition_by_edition_number(col_id: int, ed_number: int,
+                                   db: Session) -> Edition:
+    """Find an edition by the collection id and the edition number."""
+    try:
+        ed = db.query(EditionDB).join(col_x_ed).filter(
+            (col_x_ed.c.collection_id == col_id) &
+            (EditionDB.edition_number == ed_number)).first()
+
+        if ed is None:
+            return None
+
+        return Edition(**ed.__dict__)
     except SQLAlchemyError as ex:
         raise ex
 
