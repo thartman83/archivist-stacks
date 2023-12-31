@@ -44,7 +44,7 @@ async def get_collection(collection_id: int, db: Session = Depends(get_db)):
     return collection
 
 
-@CollectionRouter.get('/{collection_id}/editions/{edition_id}')
+@CollectionRouter.get('/{collection_id}/editions/{edition_number}')
 async def get_edition(collection_id: int, edition_number,
                       db: Session = Depends(get_db)):
     """Return an edition from a collection."""
