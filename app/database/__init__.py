@@ -19,7 +19,7 @@
 # }}}
 
 # __init__ {{{
-from .common import get_db, Base, create_tables
+from .common import get_db, Base
 from .record_db import RecordDB, create_record
 from .edition_db import EditionDB, create_edition
 from .collection_db import (
@@ -27,10 +27,8 @@ from .collection_db import (
     find_collection_by_id,
     add_edition, find_edition_by_edition_number
 )
-__all__ = ['get_db', 'Base', 'create_tables',
-           'RecordDB', 'create_record',
-           'EditionDB', 'create_edition',
-           'CollectionDB', 'col_x_ed',
+__all__ = ['get_db', 'Base', 'RecordDB', 'create_record',
+           'EditionDB', 'create_edition', 'CollectionDB', 'col_x_ed',
            'create_collection', 'find_collection_by_id',
            'add_edition', 'find_edition_by_edition_number']
 

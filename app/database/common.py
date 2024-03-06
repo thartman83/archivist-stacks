@@ -43,9 +43,4 @@ class Base(DeclarativeBase):  # pylint: disable=too-few-public-methods
     """Base database model."""
 
 
-def create_tables():
-    """Create the database tables."""
-    print(cfg.db_url)
-    Base.metadata.create_all(bind=engine)
-
 # }}}

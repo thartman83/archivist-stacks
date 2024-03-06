@@ -21,7 +21,6 @@
 # serviceRouter {{{
 from fastapi import APIRouter
 from app.common import Config, Storage
-from app.database import create_tables
 
 ServiceRouter = APIRouter(prefix='/service', tags=['service'])
 
@@ -34,12 +33,4 @@ def get_service_info():
         "current_storage_dir": Storage(Config()).current_storage_path()
     }
 
-
-@ServiceRouter.post('/init_db', tags=['service', 'testing'])
-def init_db():
-    """Initialize the database for testing purposes."""
-    create_tables()
-    return {
-        'Ok': True
-    }
 # }}}

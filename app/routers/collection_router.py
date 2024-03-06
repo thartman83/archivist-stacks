@@ -19,9 +19,12 @@
 # }}}
 
 # collection_router {{{
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
+from fastapi import (
+    APIRouter, Depends, HTTPException, UploadFile, status, Form
+)
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
+from typing_extensions import Annotated
 from app.database import (
     get_db, find_collection_by_id, create_collection,
     add_edition, find_edition_by_edition_number
@@ -59,17 +62,17 @@ async def get_edition(collection_id: int, edition_number,
 
 @CollectionRouter.post('', response_model=Collection,
                        status_code=status.HTTP_201_CREATED)
-async def add_collection(title: str, upload: UploadFile,
+async def add_collection(title: Annotated[str, Form()], file: UploadFile,
                          db: Session = Depends(get_db)):
     """Create a new collection."""
     try:
-        record_path, checksum, size = storage.store_record(upload)
+        record_path, checksum, size = storage.store_record(file)
         rec_create = RecordCreate(title=title,
-                                  filename=upload.filename,
+                                  filename=file.filename,
                                   record_path=record_path,
                                   checksum=checksum,
                                   size=size,
-                                  mimetype=upload.content_type)
+                                  mimetype=file.content_type)
 
         col_create = CollectionCreate(title=title)
 
@@ -83,17 +86,19 @@ async def add_collection(title: str, upload: UploadFile,
 
 @CollectionRouter.post('/{collection_id}/editions',
                        status_code=status.HTTP_201_CREATED)
-async def add_new_edition(collection_id, title: str, upload: UploadFile,
-                      db: Session = Depends(get_db)):
+async def add_new_edition(collection_id,
+                          title: Annotated[str, Form()],
+                          file: UploadFile,
+                          db: Session = Depends(get_db)):
     """Add a new edition to an existing collection."""
     try:
-        record_path, checksum, size = storage.store_record(upload)
+        record_path, checksum, size = storage.store_record(file)
         rec_create = RecordCreate(title=title,
-                                  filename=upload.filename,
+                                  filename=file.filename,
                                   record_path=record_path,
                                   checksum=checksum,
                                   size=size,
-                                  mimetype=upload.content_type)
+                                  mimetype=file.content_type)
         collection = add_edition(collection_id, rec_create, db)
     except SQLAlchemyError as ex:
         storage.rollback_record(record_path)

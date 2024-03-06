@@ -92,11 +92,21 @@ class Storage():
 
         return max_dir
 
-    def stacks_root(self):
+    def stacks_root(self) -> Path:
         """Return the root directory for the stacks."""
         return Path(self.config.storage_root, self.config.stacks_dir)
 
     def rollback_record(self, record_path: Path):
         """Remove a record on failed upload."""
         record_path.unlink()
+
+    def transient_path(self) -> Path:
+        """Return the transient storage path."""
+        return Path(self.config.storage_root, self.config.stacks_dir,
+                    self.config.transient_dir)
+
+    def storage_transient_record(self, upload_file: UploadFile) -> Path:
+        """Store a transient record into the stacks."""
+
+
 # }}}

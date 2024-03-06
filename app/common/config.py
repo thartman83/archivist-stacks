@@ -50,5 +50,6 @@ class Config(BaseSettings):
     dir_limit: int = env_or_default('FOLDER_LIMIT', 500)
     dir_mask: str = env_or_default('FOLDER_MASK', '{:06d}')
     db_url: str = env_or_default('SQL_URL', 'sqlite:///.stacksdb')
+    transient_dir: str = env_or_default('TRANSIENT_DIR', 'transient')
 
 # }}}
